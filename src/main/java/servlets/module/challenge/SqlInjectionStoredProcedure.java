@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.servlet.ServletException;
@@ -78,9 +78,12 @@ public class SqlInjectionStoredProcedure extends HttpServlet {
         log.debug("Getting Connection to Database");
         Connection conn =
             Database.getChallengeConnection(ApplicationRoot, "SqlChallengeStoredProc");
-        // CallableStatement callstmt = conn.prepareCall("CALL findUser('" + userIdentity + "');");
-        Statement stmt = conn.createStatement();
-        ResultSet resultSet = stmt.executeQuery("CALL findUser('" + userIdentity + "');");
+        PreparedStatement stmt =
+            conn.prepareStatement(
+                "SELECT customerId, customerName, customerAddress FROM customers WHERE"
+                    + " customerAddress = ?");
+        stmt.setString(1, userIdentity);
+        ResultSet resultSet = stmt.executeQuery();
 
         int i = 0;
         htmlOutput = "<h2 class='title'>" + bundle.getString("response.searchResults") + "</h2>";
@@ -89,8 +92,6 @@ public class SqlInjectionStoredProcedure extends HttpServlet {
                 + bundle.getString("response.table.name")
                 + "</th><th>"
                 + bundle.getString("response.table.address")
-                + "</th><th>"
-                + bundle.getString("response.table.comment")
                 + "</th></tr>";
 
         log.debug("Opening Result Set from query");
@@ -101,8 +102,6 @@ public class SqlInjectionStoredProcedure extends HttpServlet {
                   + Encode.forHtml(resultSet.getString(2))
                   + "</td><td>"
                   + Encode.forHtml(resultSet.getString(3))
-                  + "</td><td>"
-                  + Encode.forHtml(resultSet.getString(4))
                   + "</td></tr>";
           i++;
         }

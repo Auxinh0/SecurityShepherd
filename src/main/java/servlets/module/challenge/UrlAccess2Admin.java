@@ -71,13 +71,17 @@ public class UrlAccess2Admin extends HttpServlet {
       try {
         String userData = request.getParameter("adminData");
         boolean tamperedRequest = !userData.equalsIgnoreCase("youAreAnAdminOfAwesomenessWoopWoop");
-        if (!tamperedRequest) {
+        // Real authorization: submitting the expected value is not enough — the
+        // session must actually be an admin (checked server-side, not inferred
+        // from reaching this URL with the right data).
+        boolean authorized = Boolean.TRUE.equals(ses.getAttribute("urlAccessAdmin"));
+        if (!tamperedRequest && authorized) {
           log.debug("No request tampering detected");
         } else {
           log.debug("User Submitted - " + userData);
         }
 
-        if (!tamperedRequest) {
+        if (!tamperedRequest && authorized) {
           String userKey =
               Hash.generateUserSolution(levelResult, (String) ses.getAttribute("userName"));
           htmlOutput =

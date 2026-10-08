@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.owasp.encoder.Encode;
 import utils.FindXSS;
 import utils.Hash;
 import utils.ShepherdLogManager;
@@ -79,6 +80,7 @@ public class XssChallengeTwo extends HttpServlet {
           String searchTerm = request.getParameter("searchTerm");
           log.debug("User Submitted - " + searchTerm);
           searchTerm = XssFilter.levelTwo(searchTerm);
+          searchTerm = Encode.forHtml(searchTerm);
           log.debug("After Filtering - " + searchTerm);
           String htmlOutput = new String();
           if (FindXSS.search(searchTerm)) {

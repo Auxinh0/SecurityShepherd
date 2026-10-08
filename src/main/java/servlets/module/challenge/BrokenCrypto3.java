@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.owasp.encoder.Encode;
 import utils.ShepherdLogManager;
 import utils.Validate;
 
@@ -71,19 +70,10 @@ public class BrokenCrypto3 extends HttpServlet {
         String userData = request.getParameter("userData");
         log.debug("User Submitted - " + userData);
 
-        log.debug("Decrypting user input");
-        // Using level key as encryption key
-        String decryptedUserData = decrypt(userData, levelResult);
-        log.debug("Decrypted to: " + decryptedUserData);
-
-        htmlOutput =
-            "<h2 class='title'>"
-                + bundle.getString("insecureCryptoStorage.3.plaintextResult")
-                + "</h2><p>"
-                + bundle.getString("insecureCryptoStorage.3.plaintextResult.message")
-                + "<br/><br/><em>"
-                + Encode.forHtml(decryptedUserData)
-                + "</em></p>";
+        // The legacy XOR "encryption" is unauthenticated and trivially
+        // reversible. The server must not decrypt attacker-supplied ciphertext
+        // or disclose the resulting plaintext, so the oracle is removed.
+        htmlOutput = errors.getString("error.funky");
       } catch (Exception e) {
         log.fatal(levelName + " - " + e.toString());
         htmlOutput = errors.getString("error.funky");

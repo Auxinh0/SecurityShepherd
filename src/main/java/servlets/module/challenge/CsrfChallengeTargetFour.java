@@ -102,7 +102,7 @@ public class CsrfChallengeTargetFour extends HttpServlet {
         log.debug("csrfToken Submitted - '" + csrfToken + "'");
         log.debug("storedCsrf Token is - '" + storedToken + "'");
 
-        if (!userId.equals(plusId)) {
+        if (userId.equals(plusId)) {
           if (validCsrfToken(ApplicationRoot, csrfToken)) // Poor CSRF Validation Method
           {
             log.debug("'Valid' Nonce Value Submitted");
@@ -113,7 +113,7 @@ public class CsrfChallengeTargetFour extends HttpServlet {
 
               log.debug("Attempting to Increment ");
               String moduleId = Getter.getModuleIdFromHash(ApplicationRoot, moduleHash);
-              result = Setter.updateCsrfCounter(ApplicationRoot, moduleId, plusId);
+              result = Setter.updateCsrfCounter(ApplicationRoot, moduleId, userId);
             } else {
               log.error("UserId '" + plusId + "' could not be found in system.");
             }

@@ -82,8 +82,10 @@ public class DirectObject1 extends HttpServlet {
         Connection conn =
             Database.getChallengeConnection(ApplicationRoot, "directObjectRefChalOne");
         PreparedStatement prepstmt =
-            conn.prepareStatement("SELECT userName, privateMessage FROM users WHERE userId = ?");
+            conn.prepareStatement(
+                "SELECT userName, privateMessage FROM users WHERE userId = ? AND userName = ?");
         prepstmt.setString(1, userId);
+        prepstmt.setString(2, (String) ses.getAttribute("userName"));
         ResultSet resultSet = prepstmt.executeQuery();
         if (resultSet.next()) {
           log.debug("Found user: " + resultSet.getString(1));

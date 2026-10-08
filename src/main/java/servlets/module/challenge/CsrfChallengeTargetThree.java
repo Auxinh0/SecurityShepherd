@@ -80,7 +80,7 @@ public class CsrfChallengeTargetThree extends HttpServlet {
         }
 
         String userId = (String) ses.getAttribute("userStamp");
-        if (!userId.equals(plusId) && csrfParam != null) {
+        if (userId.equals(plusId) && csrfParam != null) {
           String ApplicationRoot = getServletContext().getRealPath("");
           String userName = (String) ses.getAttribute("userName");
           String attackerName = Getter.getUserName(ApplicationRoot, plusId);
@@ -90,7 +90,7 @@ public class CsrfChallengeTargetThree extends HttpServlet {
             log.debug("Attempting to Increment ");
             String moduleHash = CsrfChallengeThree.getLevelHash();
             String moduleId = Getter.getModuleIdFromHash(ApplicationRoot, moduleHash);
-            result = Setter.updateCsrfCounter(ApplicationRoot, moduleId, plusId);
+            result = Setter.updateCsrfCounter(ApplicationRoot, moduleId, userId);
           } else {
             log.error("UserId '" + plusId + "' could not be found.");
           }

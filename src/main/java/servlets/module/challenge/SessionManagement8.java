@@ -92,7 +92,8 @@ public class SessionManagement8 extends HttpServlet {
         if (theCookie != null) {
           log.debug("Cookie value: " + theCookie.getValue());
 
-          if (theCookie.getValue().equals("nmHqLjQknlHs")) {
+          if (theCookie.getValue().equals("nmHqLjQknlHs")
+              && "superuser".equals(ses.getAttribute("sessionManagement8Role"))) {
             log.debug("Super User Cookie detected");
             // Get key and add it to the output
             String userKey =

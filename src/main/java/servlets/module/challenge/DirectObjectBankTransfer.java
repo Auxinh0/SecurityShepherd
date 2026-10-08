@@ -81,6 +81,15 @@ public class DirectObjectBankTransfer extends HttpServlet {
         log.debug("Transfer Amount - " + transferAmountString);
         float tranferAmount = Float.parseFloat(transferAmountString);
 
+        // Broken object level authorization: the sender account must be the
+        // one this session actually authenticated as, otherwise a user could
+        // transfer funds out of someone else's account.
+        String authenticatedAccount = (String) ses.getAttribute("directObjectBankAccount");
+        if (authenticatedAccount == null || !authenticatedAccount.equals(senderAccountNumber)) {
+          out.write(bundle.getString("transfer.error.occurred"));
+          return;
+        }
+
         // Data Validation
         // Positive Transfer Amount?
         if (tranferAmount > 0) {

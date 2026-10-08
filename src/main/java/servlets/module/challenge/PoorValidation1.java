@@ -66,13 +66,14 @@ public class PoorValidation1 extends HttpServlet {
       out.print(getServletInfo());
       String htmlOutput = new String();
       try {
-        int pineappleAmount = Integer.parseInt(request.getParameter("pineappleAmount"));
+        int pineappleAmount =
+            validateAmount(Integer.parseInt(request.getParameter("pineappleAmount")));
         log.debug("pineappleAmount - " + pineappleAmount);
-        int orangeAmount = Integer.parseInt(request.getParameter("orangeAmount"));
+        int orangeAmount = validateAmount(Integer.parseInt(request.getParameter("orangeAmount")));
         log.debug("orangeAmount - " + orangeAmount);
-        int appleAmount = Integer.parseInt(request.getParameter("appleAmount"));
+        int appleAmount = validateAmount(Integer.parseInt(request.getParameter("appleAmount")));
         log.debug("appleAmount - " + appleAmount);
-        int bananaAmount = Integer.parseInt(request.getParameter("bananaAmount"));
+        int bananaAmount = validateAmount(Integer.parseInt(request.getParameter("bananaAmount")));
         log.debug("bananaAmount - " + bananaAmount);
 
         // Working out costs
@@ -121,5 +122,15 @@ public class PoorValidation1 extends HttpServlet {
     } else {
       log.error(levelName + " servlet accessed with no session");
     }
+  }
+
+  // Server-side bounds check: an order quantity must be a sane, non-negative
+  // number. Negative or absurdly large values are rejected rather than
+  // silently clamped, so they can't be used to manipulate the total.
+  private static int validateAmount(int amount) {
+    if (amount < 0 || amount > 1000) {
+      throw new IllegalArgumentException("Invalid order quantity");
+    }
+    return amount;
   }
 }
